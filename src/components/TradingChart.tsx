@@ -1,4 +1,4 @@
-import { createChart, ColorType, type CandlestickData } from 'lightweight-charts';
+import { createChart, ColorType, CandlestickSeries, type CandlestickData } from 'lightweight-charts';
 import { useEffect, useRef } from 'react';
 
 export type ChartData = CandlestickData;
@@ -61,9 +61,8 @@ export const TradingChart = ({ data }: { data: ChartData[] }) => {
         // Store the new chart instance
         chartInstanceRef.current = chart;
 
-        // Add candlestick series using the new v5 API
-        const candlestickSeries = chart.addSeries({
-            type: 'Candlestick',
+        // Add candlestick series using the correct v5 API
+        const candlestickSeries = chart.addSeries(CandlestickSeries, {
             upColor: '#26a69a',
             downColor: '#ef5350',
             borderDownColor: '#ef5350',
