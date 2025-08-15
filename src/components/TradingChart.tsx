@@ -8,7 +8,7 @@ export const TradingChart = ({ data }: { data: ChartData[] }) => {
     const chartInstanceRef = useRef<ReturnType<typeof createChart> | null>(null); // Ref to store the chart instance
 
     useEffect(() => {
-        if (!chartContainerRef.current || data.length === 0) {
+        if (!chartContainerRef.current) {
             return;
         }
 
@@ -16,6 +16,33 @@ export const TradingChart = ({ data }: { data: ChartData[] }) => {
         if (chartInstanceRef.current) {
             chartInstanceRef.current.remove();
             chartInstanceRef.current = null;
+        }
+
+        // Validate and prepare data
+        const validData = data
+            .filter((item) => 
+                item && 
+                typeof item.time === 'number' && 
+                typeof item.open === 'number' && 
+                typeof item.high === 'number' && 
+                typeof item.low === 'number' && 
+                typeof item.close === 'number' &&
+                !isNaN(item.time) &&
+                !isNaN(item.open) &&
+                !isNaN(item.high) &&
+                !isNaN(item.low) &&
+                !isNaN(item.close)
+            )
+            // Remove duplicates by time
+            .filter((value, index, self) =>
+                index === self.findIndex((t) => t.time === value.time)
+            )
+            // Sort by time in ascending order
+            .sort((a, b) => a.time - b.time);
+
+        // Don't create chart if no valid data
+        if (validData.length === 0) {
+            return;
         }
 
         const chart = createChart(chartContainerRef.current, {
@@ -45,7 +72,7 @@ export const TradingChart = ({ data }: { data: ChartData[] }) => {
             wickUpColor: '#26a69a',
         });
 
-        candlestickSeries.setData(data);
+        candlestickSeries.setData(validData);
         chart.timeScale().fitContent();
 
         const handleResize = () => {
@@ -66,7 +93,15 @@ export const TradingChart = ({ data }: { data: ChartData[] }) => {
         };
     }, [data]); // Re-create the chart whenever the data changes
 
-    return <div ref={chartContainerRef} className="w-full h-[500px]" />;
+    return (
+        <div ref={chartContainerRef} className="w-full h-[500px]">
+            {data.length === 0 && (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                    No chart data available
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default TradingChart;
