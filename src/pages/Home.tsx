@@ -20,7 +20,7 @@ const Home = () => {
                 const data = await response.json();
 
                 const formattedData: ChartData[] = data.map((d: any) => ({
-                    time: (d[0] / 1000).toString(), // lightweight-charts expects UTC timestamp in seconds
+                    time: d[0] / 1000, // lightweight-charts expects UTC timestamp in seconds
                     open: parseFloat(d[1]),
                     high: parseFloat(d[2]),
                     low: parseFloat(d[3]),
