@@ -5,13 +5,20 @@ export type ChartData = CandlestickData;
 
 export const TradingChart = ({ data }: { data: ChartData[] }) => {
     const chartContainerRef = useRef<HTMLDivElement>(null);
+    const chartInstanceRef = useRef<IChartApi | null>(null); // Ref to store the chart instance
 
     useEffect(() => {
         if (!chartContainerRef.current || data.length === 0) {
             return;
         }
 
-        const chart: IChartApi = createChart(chartContainerRef.current, {
+        // If a chart instance already exists, remove it before creating a new one
+        if (chartInstanceRef.current) {
+            chartInstanceRef.current.remove();
+            chartInstanceRef.current = null;
+        }
+
+        const chart = createChart(chartContainerRef.current, {
             layout: {
                 background: { type: ColorType.Solid, color: 'transparent' },
                 textColor: 'hsl(var(--foreground))',
@@ -24,6 +31,10 @@ export const TradingChart = ({ data }: { data: ChartData[] }) => {
             height: 500,
         });
 
+        // Store the new chart instance
+        chartInstanceRef.current = chart;
+
+        // Add candlestick series
         const candlestickSeries = chart.addCandlestickSeries({
             upColor: '#26a69a',
             downColor: '#ef5350',
@@ -37,8 +48,8 @@ export const TradingChart = ({ data }: { data: ChartData[] }) => {
         chart.timeScale().fitContent();
 
         const handleResize = () => {
-            if (chartContainerRef.current) {
-                chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+            if (chartInstanceRef.current && chartContainerRef.current) {
+                chartInstanceRef.current.applyOptions({ width: chartContainerRef.current.clientWidth });
             }
         };
 
@@ -47,7 +58,10 @@ export const TradingChart = ({ data }: { data: ChartData[] }) => {
         // Cleanup function to remove the chart and event listener
         return () => {
             window.removeEventListener('resize', handleResize);
-            chart.remove();
+            if (chartInstanceRef.current) {
+                chartInstanceRef.current.remove();
+                chartInstanceRef.current = null;
+            }
         };
     }, [data]); // Re-create the chart whenever the data changes
 
