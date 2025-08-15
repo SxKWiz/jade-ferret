@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import TradingChart, { ChartData } from '@/components/TradingChart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { showError } from '@/utils/toast';

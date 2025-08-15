@@ -1,11 +1,11 @@
-import { createChart, IChartApi, CandlestickData, ColorType } from 'lightweight-charts';
-import React, { useEffect, useRef } from 'react';
+import { createChart, ColorType, type CandlestickData } from 'lightweight-charts';
+import { useEffect, useRef } from 'react';
 
 export type ChartData = CandlestickData;
 
 export const TradingChart = ({ data }: { data: ChartData[] }) => {
     const chartContainerRef = useRef<HTMLDivElement>(null);
-    const chartInstanceRef = useRef<IChartApi | null>(null); // Ref to store the chart instance
+    const chartInstanceRef = useRef<ReturnType<typeof createChart> | null>(null); // Ref to store the chart instance
 
     useEffect(() => {
         if (!chartContainerRef.current || data.length === 0) {
