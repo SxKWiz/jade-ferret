@@ -3,10 +3,11 @@ import TradingChart, { ChartData } from '@/components/TradingChart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { showError } from '@/utils/toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import AnalysisPanel from '@/components/AnalysisPanel';
 
 const Home = () => {
     const [chartData, setChartData] = useState<ChartData[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loadingChart, setLoadingChart] = useState(true);
 
     useEffect(() => {
         const fetchChartData = async () => {
@@ -30,7 +31,7 @@ const Home = () => {
                 console.error("Error fetching chart data:", error);
                 showError("Could not load chart data. Please try again later.");
             } finally {
-                setLoading(false);
+                setLoadingChart(false);
             }
         };
 
@@ -44,13 +45,14 @@ const Home = () => {
                     <CardTitle>BTC/USDT Chart</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {loading ? (
+                    {loadingChart ? (
                         <Skeleton className="h-[500px] w-full" />
                     ) : (
                         <TradingChart data={chartData} />
                     )}
                 </CardContent>
             </Card>
+            <AnalysisPanel />
         </div>
     );
 };
