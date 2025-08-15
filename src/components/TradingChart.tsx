@@ -34,8 +34,9 @@ export const TradingChart = ({ data }: { data: ChartData[] }) => {
         // Store the new chart instance
         chartInstanceRef.current = chart;
 
-        // Add candlestick series
-        const candlestickSeries = chart.addCandlestickSeries({
+        // Add candlestick series using the new v5 API
+        const candlestickSeries = chart.addSeries({
+            type: 'Candlestick',
             upColor: '#26a69a',
             downColor: '#ef5350',
             borderDownColor: '#ef5350',
